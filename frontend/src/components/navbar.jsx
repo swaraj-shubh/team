@@ -8,32 +8,32 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu"
 
 function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [role, setRole] = useState(null)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
+
+  // ✅ CHECK GOOGLE LOGIN STATUS
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    const userRole = localStorage.getItem("role")
-    setIsAuthenticated(!!token)
-    setRole(userRole)
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      setIsAuthenticated(true)
+      setUser(JSON.parse(storedUser))
+    } else {
+      setIsAuthenticated(false)
+      setUser(null)
+    }
   }, [])
 
+  // ✅ LOGOUT LOGIC (GOOGLE)
   const handleLogout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("role")
+    localStorage.removeItem("user")
     setIsAuthenticated(false)
-    setRole(null)
+    setUser(null)
     navigate("/")
   }
 
@@ -50,71 +50,44 @@ function Navbar() {
   return (
     <header className="bg-green-900 rounded-b-sm text-white shadow-2xl w-full sticky top-0 z-50">
       <div className="container flex items-center justify-between p-4 mx-auto">
-        {/* Mobile menu button */}
+
+        {/* ✅ Mobile Menu Button */}
         <div className="md:hidden flex items-center">
           <button
             onClick={toggleMobileMenu}
             className="text-white focus:outline-none"
-            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
           </button>
         </div>
 
-        {/* Logo */}
+        {/* ✅ Logo */}
         <Link
           to="/"
           className="hidden md:block text-lg font-semibold tracking-wide hover:opacity-90"
         >
-          SecureChat
+          Team Platform
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* ✅ Desktop Navigation */}
         <NavigationMenu className="hidden md:block w-full">
           <NavigationMenuList className="flex gap-4 w-full items-center">
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link to="/" className={getLinkClass("/")}>
-                  Home
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
 
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link to="/map" className={getLinkClass("/map")}>
-                  Map
+                <Link to="/register" className={getLinkClass("/register")}>
+                  Register
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
-
-            {(role === "donor" || role === "admin") && (
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    to="/restaurantDashboard"
-                    className={getLinkClass("/restaurantDashboard")}
-                  >
-                    Donate
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            )}
 
             <div className="ml-auto flex items-center gap-4">
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link to="/profile" className={getLinkClass("/profile")}>
-                    Profile
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
 
-              {role === "admin" && (
+              {isAuthenticated && (
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link to="/admin" className={getLinkClass("/admin")}>
-                      Admin
+                    <Link to="/profile" className={getLinkClass("/profile")}>
+                      Profile
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -137,55 +110,31 @@ function Navbar() {
                   </NavigationMenuLink>
                 )}
               </NavigationMenuItem>
+
             </div>
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Mobile Navigation */}
+        {/* ✅ Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-[#E74C3C] z-50 shadow-lg">
             <div className="flex flex-col p-4 space-y-4">
-              <Link
-                to="/"
-                className={getLinkClass("/")}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
 
               <Link
-                to="/map"
-                className={getLinkClass("/map")}
+                to="/register"
+                className={getLinkClass("/register")}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Map
+                Register
               </Link>
 
-              {(role === "donor" || role === "admin") && (
+              {isAuthenticated && (
                 <Link
-                  to="/restaurantDashboard"
-                  className={getLinkClass("/restaurantDashboard")}
+                  to="/profile"
+                  className={getLinkClass("/profile")}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Donate
-                </Link>
-              )}
-
-              <Link
-                to="/profile"
-                className={getLinkClass("/profile")}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Profile
-              </Link>
-
-              {role === "admin" && (
-                <Link
-                  to="/admin"
-                  className={getLinkClass("/admin")}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Admin
+                  Profile
                 </Link>
               )}
 
@@ -208,9 +157,11 @@ function Navbar() {
                   Login
                 </Link>
               )}
+
             </div>
           </div>
         )}
+
       </div>
     </header>
   )
