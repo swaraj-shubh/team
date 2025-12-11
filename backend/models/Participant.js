@@ -45,7 +45,9 @@ const participantSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   phone: { type: String, unique: true },
   usn: { type: String, unique: true },
+  idCardUrl: String,   // ⭐ NEW FIELD
   team: { type: mongoose.Schema.Types.ObjectId, ref: "Team" },
 });
+
 
 export default mongoose.model("Participant", participantSchema);

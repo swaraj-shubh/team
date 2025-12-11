@@ -40,7 +40,6 @@ const teamSchema = new mongoose.Schema({
   teamId: String,
   leader: { type: mongoose.Schema.Types.ObjectId, ref: "Participant" },
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: "Participant" }],
-  idCardUrls: [String],
   status: { type: String, default: "pending" }
 });
 

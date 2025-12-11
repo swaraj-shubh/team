@@ -48,8 +48,8 @@ function Navbar() {
   }
 
   return (
-    <header className="bg-green-900 rounded-b-sm text-white shadow-2xl w-full sticky top-0 z-50">
-      <div className="container flex items-center justify-between p-4 mx-auto">
+    <header className="bg-slate-900 rounded-b-sm text-white shadow-2xl w-full sticky top-0 z-50">
+      <div className="fixed container flex items-center justify-between p-4 mx-auto">
 
         {/* ✅ Mobile Menu Button */}
         <div className="md:hidden flex items-center">
@@ -77,6 +77,14 @@ function Navbar() {
               <NavigationMenuLink asChild>
                 <Link to="/register" className={getLinkClass("/register")}>
                   Register
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link to="/admin" className={getLinkClass("/admin")}>
+                  Admin
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>

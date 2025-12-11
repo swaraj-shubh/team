@@ -1,16 +1,16 @@
 import express from "express";
-import Team from "../models/Team.js";
+import {
+  getAllParticipants,
+  getAllTeams,
+  updateTeamStatus,
+  deleteTeam,
+} from "../controllers/adminController.js";
 
 const router = express.Router();
 
-// ✅ Get All Teams (Admin)
-router.get("/teams", async (req, res) => {
-  try {
-    const teams = await Team.find().populate("leader members");
-    res.json(teams);
-  } catch (err) {
-    res.status(500).json({ msg: err.message });
-  }
-});
+router.get("/participants", getAllParticipants);
+router.get("/teams", getAllTeams);
+router.put("/team/status", updateTeamStatus);
+router.delete("/team/:id", deleteTeam);
 
 export default router;
