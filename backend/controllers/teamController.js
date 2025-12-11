@@ -152,8 +152,38 @@ export const registerTeam = async (req, res) => {
     // ---------------------------------------------------
     await sendEmail(
       leader.email,
-      "Team Registration Successful",
-      `<h2>${teamName}</h2><p>Your Team ID: ${teamId}</p>`
+      "🎉 Team Registration Successful",
+      `
+        <h2>Hello ${leader.name},</h2>
+
+        <p>Your team has been successfully registered!</p>
+
+        <h3>📝 Team Details</h3>
+        <ul>
+          <li><strong>Team Name:</strong> ${teamName}</li>
+          <li><strong>Team ID:</strong> ${teamId}</li>
+          <li><strong>Status:</strong> ${team.status.toUpperCase()}</li>
+        </ul>
+
+        <h3>👑 Leader</h3>
+        <ul>
+          <li>Name: ${leader.name}</li>
+          <li>Email: ${leader.email}</li>
+          <li>USN: ${leader.usn}</li>
+        </ul>
+
+        <h3>👥 Members</h3>
+        ${members.map(m => `
+          <p>
+            <strong>${m.name}</strong><br/>
+            Email: ${m.email}<br/>
+            USN: ${m.usn}
+          </p>
+        `).join("")}
+
+        <hr/>
+        <p style="color: gray;">This is an automated confirmation mail.</p>
+      `
     );
 
     res.json(team);

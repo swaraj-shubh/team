@@ -72,6 +72,13 @@ function Navbar() {
         {/* ✅ Desktop Navigation */}
         <NavigationMenu className="hidden md:block w-full">
           <NavigationMenuList className="flex gap-4 w-full items-center">
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link to="/" className={getLinkClass("/")}>
+                  Home
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
 
             <NavigationMenuItem>
               <NavigationMenuLink asChild>

@@ -292,7 +292,7 @@ export default function Register() {
         {/* CAPTCHA */}
         <div className="flex justify-center">
           <ReCAPTCHA
-            sitekey="6LcuhicsAAAAADfoRQZVK00LCKrGk5cCX4ssX4-4"
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
             onChange={setCaptcha}
             required
           />
