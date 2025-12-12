@@ -9,7 +9,7 @@ export default function Register() {
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  const API_URL = import.meta.env.VITE_API;
   // -------------------------------
   // CLOUDINARY UPLOAD FUNCTION
   // -------------------------------
@@ -103,7 +103,7 @@ export default function Register() {
 
     const parsedUser = JSON.parse(storedUser);
     axios
-      .get(`http://localhost:5000/api/profile/my-team?email=${parsedUser.email}`)
+      .get(`${API_URL}/api/profile/my-team?email=${parsedUser.email}`)
       .then((res) => {
         if (res.data.hasTeam) {
           setAlreadyRegistered(true);
@@ -156,7 +156,7 @@ export default function Register() {
       }
 
       // ⭐ Submit JSON
-      await axios.post("http://localhost:5000/api/teams/register", {
+      await axios.post(`${API_URL}/api/teams/register`, {
         teamName,
         leader: leaderData,
         members: memberData,

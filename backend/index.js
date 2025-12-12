@@ -7,6 +7,7 @@ import participantRoutes from "./routes/participantRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
+import chatRoutes from "./routes/chats.js";
 
 dotenv.config();
 const app = express();
@@ -19,7 +20,7 @@ app.use("/api/participants", participantRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/profile", profileRoutes);
-
+app.use("/api", chatRoutes);
 // Default route
 app.get("/", (req, res) => {
   res.send("🚀 Backend running successfully!");

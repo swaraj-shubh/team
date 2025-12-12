@@ -6,10 +6,10 @@ export default function AdminPage() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedTeamId, setExpandedTeamId] = useState(null);
-
+  const API_URL = import.meta.env.VITE_API;
   const fetchData = async () => {
-    const p = await axios.get("http://localhost:5000/api/admin/participants");
-    const t = await axios.get("http://localhost:5000/api/admin/teams");
+    const p = await axios.get(`${API_URL}/api/admin/participants`);
+    const t = await axios.get(`${API_URL}/api/admin/teams`);
 
     setParticipants(p.data);
     setTeams(t.data);
@@ -23,7 +23,7 @@ export default function AdminPage() {
   }, []);
 
   const updateStatus = async (teamId, status) => {
-    await axios.put("http://localhost:5000/api/admin/team/status", {
+    await axios.put(`${API_URL}/api/admin/team/status`, {
       teamId,
       status,
     });
@@ -33,7 +33,7 @@ export default function AdminPage() {
   const deleteTeam = async (teamId) => {
     if (!confirm("Are you sure? Deleting team also deletes participants.")) return;
 
-    await axios.delete(`http://localhost:5000/api/admin/team/${teamId}`);
+    await axios.delete(`${API_URL}/api/admin/team/${teamId}`);
     fetchData();
   };
 

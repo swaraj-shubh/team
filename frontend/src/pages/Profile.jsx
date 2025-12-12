@@ -6,7 +6,7 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const API_URL = import.meta.env.VITE_API;
   const navigate = useNavigate();
 
   // ✅ Load user from localStorage
@@ -25,7 +25,7 @@ export default function Profile() {
     if (!user) return;
 
     axios
-      .get(`http://localhost:5000/api/profile/my-team?email=${user.email}`)
+      .get(`${API_URL}/api/profile/my-team?email=${user.email}`)
       .then((res) => {
         setTeamData(res.data);
         setLoading(false);

@@ -7,6 +7,7 @@ import Auth from './pages/Auth';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
+import ChatbotWidget from './components/ChatbotWidget';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
         </Routes>
 
       </Routerz_Hehe>
+      <ChatbotWidget />
     </>
   )
 }
