@@ -41,12 +41,33 @@
 import mongoose from "mongoose";
 
 const participantSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  phone: { type: String, unique: true },
-  usn: { type: String, unique: true },
+  name: {
+    type: String, 
+    required: true
+  },
+  email: { 
+    required: true,
+    type: String, 
+    unique: true,
+    trim : true,
+    lowercase : true
+  },
+  phone: { 
+    required: true,
+    type: String, 
+    unique: true 
+  },
+  usn: { 
+    required: true,   
+    type: String, 
+    unique: true 
+  },
   idCardUrl: String,   // ⭐ NEW FIELD
-  team: { type: mongoose.Schema.Types.ObjectId, ref: "Team" },
+  team: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Team",
+    default: null 
+},
 });
 
 

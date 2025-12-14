@@ -36,11 +36,30 @@
 import mongoose from "mongoose";
 
 const teamSchema = new mongoose.Schema({
-  teamName: String,
-  teamId: String,
-  leader: { type: mongoose.Schema.Types.ObjectId, ref: "Participant" },
-  members: [{ type: mongoose.Schema.Types.ObjectId, ref: "Participant" }],
-  status: { type: String, default: "pending" }
+  teamName: {
+    type: String, 
+    required: true,
+    unique: true
+  },
+  teamId: {
+    type: String, 
+    required: true, 
+    unique: true
+  },
+  leader: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    required: true,
+    ref: "Participant" 
+  },
+  members: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Participant"
+  }],
+  status: { 
+    type: String, 
+    enum: ["pending", "verified", "rejected"],
+    default: "pending" 
+  },
 });
 
 export default mongoose.model("Team", teamSchema);

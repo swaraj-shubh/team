@@ -1,110 +1,12 @@
-// import Team from "../models/Team.js";
-// import Participant from "../models/Participant.js";
-// import axios from "axios";
-// import { sendEmail } from "../utils/sendEmail.js";
-
-// export const registerTeam = async (req, res) => {
-//   try {
-//     const { teamName, captchaToken } = req.body;
-
-//     // ✅ ✅ ✅ FIX: PARSE JSON STRINGS INTO OBJECTS
-//     const leader = JSON.parse(req.body.leader);
-//     const members = JSON.parse(req.body.members);
-
-//     // ✅ CAPTCHA CHECK (optional)
-//     // const captchaRes = await axios.post(
-//     //   "https://www.google.com/recaptcha/api/siteverify",
-//     //   null,
-//     //   {
-//     //     params: {
-//     //       secret: process.env.RECAPTCHA_SECRET,
-//     //       response: captchaToken,
-//     //     },
-//     //   }
-//     // );
-
-//     // if (!captchaRes.data.success)
-//     //   return res.status(400).json({ msg: "Captcha Failed" });
-
-//     // ✅ Duplicate Check
-//     const allMembers = [leader, ...members];
-
-//     for (let user of allMembers) {
-//       const exists = await Participant.findOne({
-//         $or: [
-//           { email: user.email },
-//           { phone: user.phone },
-//           { usn: user.usn },
-//         ],
-//       });
-
-//       if (exists)
-//         return res.status(400).json({
-//           msg: "Duplicate participant found",
-//         });
-//     }
-
-//     // ✅ Create Participants
-//     const leaderDoc = await Participant.create(leader);
-//     const memberDocs = await Participant.insertMany(members);
-
-//     // ✅ Create Team
-//     const teamId = "TEAM-" + Date.now();
-
-//     const team = await Team.create({
-//       teamName,
-//       teamId,
-//       leader: leaderDoc._id,
-//       members: memberDocs.map((m) => m._id),
-//       idCardUrls: req.files.map((f) => f.path),
-//       status: "pending",
-//     });
-
-//     // ✅ Update leader with team reference
-//     leaderDoc.team = team._id;
-//     await leaderDoc.save();
-
-//     // ✅ Send email
-//     await sendEmail(
-//       leader.email,
-//       "✅ Team Registered Successfully",
-//       `<h2>${teamName}</h2><p>Your Team ID: ${teamId}</p>`
-//     );
-
-//     res.json(team);
-
-//   } catch (err) {
-//     console.error("REGISTER ERROR:", err);
-//     res.status(500).json({ msg: err.message });
-//   }
-// };
-
-
+// controller/teamController.js
 import Team from "../models/Team.js";
 import Participant from "../models/Participant.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import { verifyIdCard } from "../utils/verifyId.js";
 
 export const registerTeam = async (req, res) => {
   try {
     const { teamName, leader, members } = req.body;
-
-    // leader = { name, email, phone, usn, idCardUrl }
-    // members = [ { name, email, phone, usn, idCardUrl }, ... ]
-
-    // ✅ CAPTCHA CHECK (optional)
-    // const captchaRes = await axios.post(
-    //   "https://www.google.com/recaptcha/api/siteverify",
-    //   null,
-    //   {
-    //     params: {
-    //       secret: process.env.RECAPTCHA_SECRET,
-    //       response: captchaToken,
-    //     },
-    //   }
-    // );
-
-    // if (!captchaRes.data.success)
-    //   return res.status(400).json({ msg: "Captcha Failed" });
 
     // ---------------------------------------------------
     // Duplicate Check
@@ -125,8 +27,30 @@ export const registerTeam = async (req, res) => {
       }
     }
 
+    // -----------------------------------------------------------
+    // AUTO VERIFICATION (ADD THIS BLOCK RIGHT HERE)
+    // -----------------------------------------------------------
+    let autoStatus = "verified";
+
+    // Leader Verification
+    const leaderVerify = await verifyIdCard(
+      leader.idCardUrl,
+      leader.name
+    );
+
+    if (leaderVerify.error) autoStatus = "pending";
+    else if (!leaderVerify.success) autoStatus = "rejected";
+
+    // Members Verification
+    for (let m of members) {
+      const result = await verifyIdCard(m.idCardUrl, m.name);
+
+      if (result.error) autoStatus = "pending";
+      else if (!result.success) autoStatus = "rejected";
+    }
+
     // ---------------------------------------------------
-    // Create Participants (idCardUrl INCLUDED)
+    // Create Participants
     // ---------------------------------------------------
     const leaderDoc = await Participant.create(leader);
     const memberDocs = await Participant.insertMany(members);
@@ -141,7 +65,7 @@ export const registerTeam = async (req, res) => {
       teamId,
       leader: leaderDoc._id,
       members: memberDocs.map((m) => m._id),
-      status: "pending",
+      status: autoStatus,   // << 🔥 FINAL STATUS HERE
     });
 
     leaderDoc.team = team._id;
